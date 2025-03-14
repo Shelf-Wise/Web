@@ -30,6 +30,7 @@ import {
 } from "../ui/form";
 import { Loader2 } from "lucide-react";
 import { useLocation } from "react-router-dom";
+import { useUploadBlobMutation } from "@/state/image/imageApiSlice";
 
 // Define the form schema with Zod
 const bookFormSchema = z.object({
@@ -37,7 +38,7 @@ const bookFormSchema = z.object({
   author: z.string().min(1, "Author is required"),
   isbn: z.string().min(1, "ISBN is required"),
   publicationYear: z.string().min(1, "Publication year is required"),
-  coverImage: z.any().optional(),
+  imageUrl: z.any().optional(),
   // Add more fields as needed
 });
 
@@ -51,6 +52,7 @@ interface AddBookModalProps {
 export const AddBookModal = ({ open, openChange }: AddBookModalProps) => {
   const [addBook] = useAddBookMutation();
   const [updateBook] = useUpdateBookMutation();
+  const [uploadBlob] = useUploadBlobMutation();
   const [bookId, setBookId] = useState<string | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string>(
     "https://ui.shadcn.com/placeholder.svg"
@@ -58,10 +60,8 @@ export const AddBookModal = ({ open, openChange }: AddBookModalProps) => {
   const location = useLocation();
   const initialUrlChecked = useRef(false);
 
-  // Determine if we're in edit mode
   const isEditMode = !!bookId;
 
-  // Fetch book data if we're in edit mode
   const { data: bookData, isLoading: isBookLoading } = useGetBookByIdQuery(
     bookId || "",
     {
@@ -70,7 +70,6 @@ export const AddBookModal = ({ open, openChange }: AddBookModalProps) => {
     }
   );
 
-  // Setup form with validation
   const form = useForm<BookForm>({
     resolver: zodResolver(bookFormSchema),
     defaultValues: {
@@ -78,10 +77,10 @@ export const AddBookModal = ({ open, openChange }: AddBookModalProps) => {
       author: "",
       isbn: "",
       publicationYear: "",
+      imageUrl: z.string().optional(),
     },
   });
 
-  // Check URL parameters for edit mode
   useEffect(() => {
     if (initialUrlChecked.current) return;
 
@@ -108,11 +107,12 @@ export const AddBookModal = ({ open, openChange }: AddBookModalProps) => {
         author: bookData.value.author || "",
         isbn: bookData.value.isbn || "",
         publicationYear: bookData.value.publicationYear?.toString() || "",
+        imageUrl: bookData.value.imageUrl || "",
       });
 
-      // if (bookData.value.coverImage) {
-      //   setPreviewUrl(bookData.value.coverImage);
-      // }
+      if (bookData.value.imageUrl) {
+        setPreviewUrl(bookData.value.imageUrl);
+      }
     }
   }, [bookData, form, isEditMode]);
 
@@ -130,37 +130,45 @@ export const AddBookModal = ({ open, openChange }: AddBookModalProps) => {
     }
   }, [open, form]);
 
-  // Handle image file changes
-  // const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   const file = e.target.files?.[0];
-  //   if (file) {
-  //     const reader = new FileReader();
-  //     reader.onloadend = () => {
-  //       setPreviewUrl(reader.result as string);
-  //     };
-  //     reader.readAsDataURL(file);
-  //     form.setValue("coverImage", file);
-  //   }
-  // };
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewUrl(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+      console.log("HERE");
+      
+
+      try {
+        // Create FormData for the upload
+        const imageData = new FormData();
+        imageData.append('file', file);
+
+        // Upload the image
+        const result = await uploadBlob(imageData).unwrap();
+
+        // Set the URL to the form state
+        if (result?.url) {
+          form.setValue("imageUrl", result.url);
+        }
+      } catch (error) {
+        console.error("Failed to upload image:", error);
+      }
+    }
+  };
 
   // Form submission handler
   const onSubmit: SubmitHandler<BookForm> = async (data) => {
     try {
-      const formData = new FormData();
-      formData.append("title", data.title);
-      formData.append("author", data.author);
-      formData.append("isbn", data.isbn);
-      formData.append("publishYear", data.publicationYear);
-
-      if (data.coverImage) {
-        formData.append("coverImage", data.coverImage);
-      }
-
       if (isEditMode && bookId) {
-        formData.append("id", bookId);
-        await updateBook(form.getValues()).unwrap();
+        await updateBook({
+          id: bookId,
+          ...data
+        }).unwrap();
       } else {
-        await addBook(form.getValues()).unwrap();
+        await addBook(data).unwrap();
       }
 
       openChange(false);
@@ -207,7 +215,7 @@ export const AddBookModal = ({ open, openChange }: AddBookModalProps) => {
                       id="coverImage"
                       type="file"
                       accept="image/*"
-                      // onChange={handleImageChange}
+                      onChange={handleImageChange}
                     />
                   </div>
                 </div>
