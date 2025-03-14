@@ -6,10 +6,11 @@ import { DataTable } from "../tanstack-table/data-table";
 import { columns } from "./table/columns";
 import { useLocation, useNavigate } from "react-router-dom";
 import { MemberModal } from "./MemberModal";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 export const ViewMembersView = () => {
   const [openModal, setOpenModal] = React.useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
   const { data: apiData, isError, isLoading } = useGetMembersQuery();
@@ -76,6 +77,10 @@ export const ViewMembersView = () => {
     handleOpenChange(true);
   };
 
+  const filteredMembers = apiData?.value.filter((member) =>
+    member.fullName.toLowerCase().includes(searchQuery.toLowerCase()) 
+  );   
+
   const columnWithActions = columns({
     onDelete: handleDelete,
     onEdit: handleEdit,
@@ -83,7 +88,19 @@ export const ViewMembersView = () => {
 
   return (
     <div className="w-full mt-5">
-      <DataTable columns={columnWithActions} data={apiData?.value || []} />
+
+      {/* Search Input Field */}
+      <div className="mb-4 flex justify-end">
+        <input
+          type="text"
+          placeholder="Search members..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="p-1 border border-black rounded text-sm w-1/4"
+        />
+      </div>
+
+      <DataTable columns={columnWithActions} data={filteredMembers || []} />
       {openModal && (
         <MemberModal open={openModal} openChange={handleOpenChange} />
       )}

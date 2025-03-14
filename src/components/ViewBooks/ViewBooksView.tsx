@@ -11,6 +11,7 @@ import { AddBookModal } from "./AddBookModal";
 
 export const ViewBooksView = () => {
   const [openModal, setOpenModal] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
   const { data: apiData, isLoading, isError } = useGetBooksQuery();
@@ -87,6 +88,11 @@ export const ViewBooksView = () => {
     );
   }
 
+  // Filter books based on search query
+  const filteredBooks = apiData?.value.filter((book) =>
+    book.title.toLowerCase().includes(searchQuery.toLowerCase()) // Adjust based on book structure
+  );
+
   const booksWithActions = columns({
     onDelete: handleDelete,
     onEdit: handleEdit,
@@ -94,8 +100,20 @@ export const ViewBooksView = () => {
 
   return (
     <div className="w-full mt-5">
+
+    {/* Search Input Field */}
+    <div className="mb-4 flex justify-end">
+      <input
+        type="text"
+        placeholder="Search books..."
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        className="p-1 border border-black rounded text-sm w-1/4"
+      />
+    </div>
+
       {/* <div className="flex justify-between mb-4"></div> */}
-      <DataTable columns={booksWithActions} data={apiData?.value || []} />
+      <DataTable columns={booksWithActions} data={filteredBooks || []} />
       {openModal && (
         <AddBookModal open={openModal} openChange={handleOpenChange} />
       )}
