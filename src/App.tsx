@@ -11,7 +11,7 @@ import { AppSidebar } from "./components/app-sidebar";
 import { Separator } from "@radix-ui/react-separator";
 import { ViewBooks } from "./pages/ViewBooks";
 import { ViewMembers } from "./pages/ViewMembers";
-import { BorrowBooks } from "./pages/BorrowBook";
+import { ReturnBooks } from "./pages/ReturnBooks";
 
 const MainLayout = () => {
   return (
@@ -41,7 +41,8 @@ function App() {
             <Route path="/" element={<Dashboard />} />
             <Route path="/books" element={<ViewBooks />} />
             <Route path="/members" element={<ViewMembers />} />
-            <Route path="/borrow-book" element={<BorrowBooks />} />
+            {/* <Route path="/borrow-book" element={<BorrowBooks />} /> */}
+            <Route path="/return-book" element={<ReturnBooks />} />
           </Route>
         </Routes>
       </SidebarProvider>

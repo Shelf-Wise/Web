@@ -1,3 +1,5 @@
+import { Genre } from "./Genre";
+
 export type Book = {
   id: string;
   title: string;
@@ -6,6 +8,7 @@ export type Book = {
   isbn: string;
   status: BookStatus;
   imageUrl: string;
+  genreIds: string[]
 };
 
 export const enum BookStatus {
@@ -27,3 +30,17 @@ export type BookBorrow = {
   borrowDate: string;
   dueDate: string;
 };
+
+export interface BorrowedBook {
+  id: string;
+  bookId: string;
+  title: string;
+  author: string;
+  bookStatus: string;
+  imageUrl: string;
+  memberId: string;
+  borrowDate: string;
+  dueDate: string;
+  returnDate: string | null;
+  createdAt: string;
+}

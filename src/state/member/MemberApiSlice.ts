@@ -3,9 +3,11 @@ import { Member } from "@/types/Member";
 import { ApiResponse } from "@/types/Response";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
+const PUBLIC_URL = import.meta.env.VITE_PUBLIC_URL;
+
 export const memberApiSlice = createApi({
   reducerPath: "memberApi",
-  baseQuery: fetchBaseQuery({ baseUrl: "https://localhost:7087/api" }),
+  baseQuery: fetchBaseQuery({ baseUrl: PUBLIC_URL }),
   tagTypes: Object.values(ApiTags),
   endpoints: (builder) => ({
     getMembers: builder.query<ApiResponse<Member[]>, void>({

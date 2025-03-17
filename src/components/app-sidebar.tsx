@@ -34,21 +34,13 @@ const data = {
       title: "Dashboard",
       url: "/",
       icon: SquareTerminal,
-      isActive: false,
-      items: [
-        {
-          title: "Dashboard",
-          url: "/",
-        },
-        {
-          title: "Starred",
-          url: "#",
-        },
-        {
-          title: "Settings",
-          url: "#",
-        },
-      ],
+      isActive: true,
+      // items: [
+      //   {
+      //     title: "Dashboard",
+      //     url: "/",
+      //   },
+      // ],
     },
     {
       title: "Manage Books",
@@ -64,8 +56,8 @@ const data = {
           url: "/books?modal=add-book",
         },
         {
-          title: "Borrow Book",
-          url: "/borrow-book",
+          title: "Return Book",
+          url: "/return-book",
         },
       ],
     },
@@ -82,39 +74,31 @@ const data = {
           title: "Add Members",
           url: "/members?modal=add-member",
         },
-        {
-          title: "Tutorials",
-          url: "#",
-        },
-        {
-          title: "Changelog",
-          url: "#",
-        },
       ],
     },
-    {
-      title: "Manage Fines",
-      url: "#",
-      icon: CircleDollarSign,
-      items: [
-        {
-          title: "General",
-          url: "#",
-        },
-        {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
-          url: "#",
-        },
-      ],
-    },
+    // {
+    //   title: "Settings",
+    //   url: "#",
+    //   icon: CircleDollarSign,
+    //   items: [
+    //     {
+    //       title: "General",
+    //       url: "#",
+    //     },
+    //     {
+    //       title: "Team",
+    //       url: "#",
+    //     },
+    //     {
+    //       title: "Billing",
+    //       url: "#",
+    //     },
+    //     {
+    //       title: "Limits",
+    //       url: "#",
+    //     },
+    //   ],
+    // },
   ],
   // projects: [
   //   {

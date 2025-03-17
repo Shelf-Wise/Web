@@ -1,11 +1,13 @@
 import { ApiTags } from "@/types/ApiTags";
-import { Book } from "@/types/Book";
+import { Book, BorrowedBook } from "@/types/Book";
 import { ApiResponse } from "@/types/Response";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
+const PUBLIC_URL = import.meta.env.VITE_PUBLIC_URL;
+
 export const bookApiSlice = createApi({
   reducerPath: "bookApi",
-  baseQuery: fetchBaseQuery({ baseUrl: "https://localhost:7087/api" }),
+  baseQuery: fetchBaseQuery({ baseUrl: PUBLIC_URL }),
   tagTypes: Object.values(ApiTags),
   endpoints: (builder) => ({
     getBooks: builder.query<ApiResponse<Book[]>, void>({
@@ -47,6 +49,30 @@ export const bookApiSlice = createApi({
       }),
       invalidatesTags: [ApiTags.Book, ApiTags.Member],
     }),
+    returnBook: builder.mutation({
+      query: ({ memberId, bookId }) => ({
+        url: `services/ReturnBook`,
+        method: "POST",
+        body: { memberId, bookId },
+      }),
+      invalidatesTags: [ApiTags.Book, ApiTags.Member],
+    }),
+    getBorrowBooksByMember: builder.query<ApiResponse<Array<BorrowedBook>>, string>({
+      query: (memberId) => ({
+        url: `services/getBorrowedBooksBymemberId/${memberId}`,
+        method: "GET",
+      }),
+      providesTags: (result) => {
+        if (!result || !Array.isArray(result.value)) {
+          return [{ type: ApiTags.Member, id: 'LIST' }];
+        }
+
+        return [
+          ...result.value.map((book) => ({ type: ApiTags.Book, id: book.bookId })),
+          { type: ApiTags.Member, id: 'LIST' }
+        ];
+      }
+    }),
   }),
 });
 
@@ -57,4 +83,6 @@ export const {
   useUpdateBookMutation,
   useDeleteBookMutation,
   useBorrowBookMutation,
+  useReturnBookMutation,
+  useGetBorrowBooksByMemberQuery,
 } = bookApiSlice;

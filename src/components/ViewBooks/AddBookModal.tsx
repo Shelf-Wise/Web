@@ -28,9 +28,35 @@ import {
   FormLabel,
   FormMessage,
 } from "../ui/form";
-import { Loader2 } from "lucide-react";
+import { Loader, Loader2, X } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import { useUploadBlobMutation } from "@/state/image/imageApiSlice";
+import { Badge } from "../ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+import { useGetAllGenreQuery } from "@/state/genre/genreApiSlice";
+
+// Define Genre interface based on your API response
+interface Genre {
+  id: string;
+  name: string;
+  description: string | null;
+}
+
+interface ApiResponse<T> {
+  value: T;
+  isSuccess: boolean;
+  isFailure: boolean;
+  error: {
+    code: string;
+    description: string | null;
+  };
+}
 
 // Define the form schema with Zod
 const bookFormSchema = z.object({
@@ -38,8 +64,8 @@ const bookFormSchema = z.object({
   author: z.string().min(1, "Author is required"),
   isbn: z.string().min(1, "ISBN is required"),
   publicationYear: z.string().min(1, "Publication year is required"),
-  imageUrl: z.any().optional(),
-  // Add more fields as needed
+  imageUrl: z.any(),
+  genreIds: z.array(z.string()).default([]),
 });
 
 type BookForm = z.infer<typeof bookFormSchema>;
@@ -52,15 +78,21 @@ interface AddBookModalProps {
 export const AddBookModal = ({ open, openChange }: AddBookModalProps) => {
   const [addBook] = useAddBookMutation();
   const [updateBook] = useUpdateBookMutation();
-  const [uploadBlob] = useUploadBlobMutation();
+  const [uploadBlob, { isLoading: uploadingImage, isError: errorUploading }] = useUploadBlobMutation();
+  const { data: genresData, isLoading: isLoadingGenre, isError: isErrorGenre } = useGetAllGenreQuery();
   const [bookId, setBookId] = useState<string | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string>(
     "https://ui.shadcn.com/placeholder.svg"
   );
+  const [selectedGenreId, setSelectedGenreId] = useState<string>("");
   const location = useLocation();
   const initialUrlChecked = useRef(false);
 
+  console.log("GeneD", genresData);
+
+
   const isEditMode = !!bookId;
+
 
   const { data: bookData, isLoading: isBookLoading } = useGetBookByIdQuery(
     bookId || "",
@@ -77,7 +109,8 @@ export const AddBookModal = ({ open, openChange }: AddBookModalProps) => {
       author: "",
       isbn: "",
       publicationYear: "",
-      imageUrl: z.string().optional(),
+      imageUrl: z.string(),
+      genreIds: [],
     },
   });
 
@@ -108,6 +141,7 @@ export const AddBookModal = ({ open, openChange }: AddBookModalProps) => {
         isbn: bookData.value.isbn || "",
         publicationYear: bookData.value.publicationYear?.toString() || "",
         imageUrl: bookData.value.imageUrl || "",
+        genreIds: bookData.value.genreIds || [],
       });
 
       if (bookData.value.imageUrl) {
@@ -124,9 +158,11 @@ export const AddBookModal = ({ open, openChange }: AddBookModalProps) => {
         author: "",
         isbn: "",
         publicationYear: "",
+        genreIds: [],
       });
       setBookId(null);
       setPreviewUrl("https://ui.shadcn.com/placeholder.svg");
+      setSelectedGenreId("");
     }
   }, [open, form]);
 
@@ -138,18 +174,13 @@ export const AddBookModal = ({ open, openChange }: AddBookModalProps) => {
         setPreviewUrl(reader.result as string);
       };
       reader.readAsDataURL(file);
-      console.log("HERE");
-      
 
       try {
-        // Create FormData for the upload
         const imageData = new FormData();
         imageData.append('file', file);
 
-        // Upload the image
         const result = await uploadBlob(imageData).unwrap();
 
-        // Set the URL to the form state
         if (result?.url) {
           form.setValue("imageUrl", result.url);
         }
@@ -159,16 +190,50 @@ export const AddBookModal = ({ open, openChange }: AddBookModalProps) => {
     }
   };
 
+  // Add selected genre to form
+  const addGenre = () => {
+    if (!selectedGenreId) return;
+
+    const currentGenreIds = form.getValues("genreIds");
+    if (!currentGenreIds.includes(selectedGenreId)) {
+      form.setValue("genreIds", [...currentGenreIds, selectedGenreId]);
+    }
+
+    setSelectedGenreId("");
+  };
+
+  // Remove genre from form
+  const removeGenre = (genreIdToRemove: string) => {
+    const currentGenreIds = form.getValues("genreIds");
+    form.setValue(
+      "genreIds",
+      currentGenreIds.filter(id => id !== genreIdToRemove)
+    );
+  };
+
+  // Helper to get genre name by ID
+  const getGenreNameById = (id: string): string => {
+    const genre = genresData?.value.find(g => g.id === id);
+    return genre?.name || "Unknown Genre";
+  };
+
   // Form submission handler
   const onSubmit: SubmitHandler<BookForm> = async (data) => {
     try {
+      console.log(data, ":oncusd");
+      
       if (isEditMode && bookId) {
         await updateBook({
           id: bookId,
           ...data
         }).unwrap();
       } else {
-        await addBook(data).unwrap();
+        const updatedData = {
+          ...data,
+          imageUrl: "https://ui.shadcn.com/placeholder.svg"
+        };
+        console.log(updatedData);
+        await addBook(updatedData).unwrap();
       }
 
       openChange(false);
@@ -177,6 +242,10 @@ export const AddBookModal = ({ open, openChange }: AddBookModalProps) => {
     }
   };
 
+  if (isLoadingGenre || genresData == undefined) {
+    console.log("Sttill loading", genresData);
+    return <div><Loader2 /></div>
+  }
   return (
     <Dialog open={open} onOpenChange={openChange}>
       <DialogTrigger asChild>
@@ -296,6 +365,77 @@ export const AddBookModal = ({ open, openChange }: AddBookModalProps) => {
                       </FormItem>
                     )}
                   />
+
+                  {/* Genres Selection */}
+                  <FormField
+                    control={form.control}
+                    name="genreIds"
+                    render={({ field }) => (
+                      <FormItem className="grid grid-cols-4 items-start gap-4">
+                        <FormLabel className="text-right pt-2">Genres</FormLabel>
+                        <div className="col-span-3 space-y-3">
+                          <div className="flex items-center gap-2">
+                            <Select
+                              value={selectedGenreId}
+                              onValueChange={setSelectedGenreId}
+                            >
+                              <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Select Genre" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {genresData?.value && genresData.value.map((genre: Genre) => (
+                                  <SelectItem key={genre.id
+                                  } value={genre.id}>
+                                    {genre.name}
+                                  </SelectItem>
+                                ))}
+                                {(!genresData?.value || genresData.value.length === 0) && (
+                                  <SelectItem value="" disabled>
+                                    No genres available
+                                  </SelectItem>
+                                )}
+                              </SelectContent>
+                            </Select>
+                            <Button
+                              type="button"
+                              onClick={addGenre}
+                              disabled={!selectedGenreId}
+                              size="sm"
+                            >
+                              Add
+                            </Button>
+                          </div>
+
+                          <div className="flex flex-wrap gap-2">
+                            {field.value.map((genreId) => (
+                              <Badge
+                                key={genreId}
+                                variant="secondary"
+                                className="flex items-center gap-1 px-3 py-1"
+                              >
+                                {getGenreNameById(genreId)}
+                                <Button
+                                  type="button"
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-4 w-4 p-0 hover:bg-transparent"
+                                  onClick={() => removeGenre(genreId)}
+                                >
+                                  <X className="h-3 w-3" />
+                                </Button>
+                              </Badge>
+                            ))}
+                            {field.value.length === 0 && (
+                              <span className="text-muted-foreground text-sm">
+                                No genres selected
+                              </span>
+                            )}
+                          </div>
+                          <FormMessage />
+                        </div>
+                      </FormItem>
+                    )}
+                  />
                 </div>
               </div>
 
@@ -307,11 +447,11 @@ export const AddBookModal = ({ open, openChange }: AddBookModalProps) => {
                 >
                   Cancel
                 </Button>
-                <Button type="submit" disabled={form.formState.isSubmitting}>
-                  {form.formState.isSubmitting ? (
+                <Button type="submit" disabled={form.formState.isSubmitting || uploadingImage}>
+                  {form.formState.isSubmitting || uploadingImage ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      {isEditMode ? "Updating..." : "Saving..."}
+                      {isEditMode ? "Updating..." : "Please wait..."}
                     </>
                   ) : isEditMode ? (
                     "Update Book"
