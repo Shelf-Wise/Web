@@ -3,7 +3,6 @@ import {
   BookOpenText,
   SquareTerminal,
   BookA,
-  CircleDollarSign,
   UserRoundCog,
 } from "lucide-react";
 

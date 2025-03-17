@@ -1,13 +1,9 @@
 "use client"
 
 import {
-  BadgeCheck,
-  Bell,
   ChevronsUpDown,
-  CreditCard,
   DollarSign,
   LogOut,
-  Sparkles,
   Tag,
 } from "lucide-react"
 

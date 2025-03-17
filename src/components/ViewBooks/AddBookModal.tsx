@@ -28,7 +28,7 @@ import {
   FormLabel,
   FormMessage,
 } from "../ui/form";
-import { Loader, Loader2, X } from "lucide-react";
+import { Loader2, X } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import { useUploadBlobMutation } from "@/state/image/imageApiSlice";
 import { Badge } from "../ui/badge";
@@ -46,16 +46,6 @@ interface Genre {
   id: string;
   name: string;
   description: string | null;
-}
-
-interface ApiResponse<T> {
-  value: T;
-  isSuccess: boolean;
-  isFailure: boolean;
-  error: {
-    code: string;
-    description: string | null;
-  };
 }
 
 // Define the form schema with Zod
@@ -78,8 +68,8 @@ interface AddBookModalProps {
 export const AddBookModal = ({ open, openChange }: AddBookModalProps) => {
   const [addBook] = useAddBookMutation();
   const [updateBook] = useUpdateBookMutation();
-  const [uploadBlob, { isLoading: uploadingImage, isError: errorUploading }] = useUploadBlobMutation();
-  const { data: genresData, isLoading: isLoadingGenre, isError: isErrorGenre } = useGetAllGenreQuery();
+  const [uploadBlob, { isLoading: uploadingImage }] = useUploadBlobMutation();
+  const { data: genresData, isLoading: isLoadingGenre } = useGetAllGenreQuery();
   const [bookId, setBookId] = useState<string | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string>(
     "https://ui.shadcn.com/placeholder.svg"

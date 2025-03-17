@@ -7,7 +7,6 @@ import {
 } from "@/components/ui/select";
 import {
     Table,
-    TableBody,
     TableCaption,
     TableCell,
     TableHead,
@@ -24,10 +23,8 @@ import {
 } from "@/state/book/BookApiSlice";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { BookStatus, mapBookEnum } from "@/types/Book";
-import { Badge } from "@/components/ui/badge";
+import { BookStatus } from "@/types/Book";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { format } from "date-fns";
 import { formatDate } from "@/lib/date";
 
 export const ReturnBooks = () => {
@@ -111,13 +108,6 @@ export const ReturnBooks = () => {
     const borrowedBooks = Array.isArray(borrowedBooksResponse) ? borrowedBooksResponse : [];
 
     console.log("BorrowedBooks", borrowedBooksResponse);
-
-
-    const statusVariant: Record<BookStatus, string> = {
-        [BookStatus.AVAILABLE]: "available",
-        [BookStatus.BORROWED]: "borrowed",
-        [BookStatus.DAMAGED]: "damaged",
-    };
 
     // Filter books based on the active tab and available data
     const availableBooks = books?.value.filter(
