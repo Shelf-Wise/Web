@@ -27,6 +27,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
+import { useNavigate } from "react-router-dom"
 
 export function NavUser({
   user,
@@ -38,7 +39,7 @@ export function NavUser({
   }
 }) {
   const { isMobile } = useSidebar()
-
+  const navigate = useNavigate();
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -86,11 +87,11 @@ export function NavUser({
             </DropdownMenuGroup>
             <DropdownMenuSeparator /> */}
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem >
                 <DollarSign />
                 Handle Fines
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate("/genre")}>
                 <Tag />
                 Handle Genre
               </DropdownMenuItem>

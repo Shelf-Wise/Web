@@ -12,6 +12,7 @@ import { Separator } from "@radix-ui/react-separator";
 import { ViewBooks } from "./pages/ViewBooks";
 import { ViewMembers } from "./pages/ViewMembers";
 import { ReturnBooks } from "./pages/ReturnBooks";
+import { GenreHandle } from "./pages/ManageGenre";
 
 const MainLayout = () => {
   return (
@@ -43,6 +44,7 @@ function App() {
             <Route path="/members" element={<ViewMembers />} />
             {/* <Route path="/borrow-book" element={<BorrowBooks />} /> */}
             <Route path="/return-book" element={<ReturnBooks />} />
+            <Route path="/genre" element={<GenreHandle />} />
           </Route>
         </Routes>
       </SidebarProvider>
