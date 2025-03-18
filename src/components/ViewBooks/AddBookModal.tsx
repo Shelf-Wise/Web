@@ -45,7 +45,11 @@ import { useGetAllGenreQuery } from "@/state/genre/genreApiSlice";
 interface Genre {
   id: string;
   name: string;
-  description: string | null;
+  description?: string | null;
+  createdBy?: string;
+  createdAt?: string;
+  updatedBy?: string;
+  updateAt?: string;
 }
 
 // Define the form schema with Zod
@@ -78,11 +82,7 @@ export const AddBookModal = ({ open, openChange }: AddBookModalProps) => {
   const location = useLocation();
   const initialUrlChecked = useRef(false);
 
-  console.log("GeneD", genresData);
-
-
   const isEditMode = !!bookId;
-
 
   const { data: bookData, isLoading: isBookLoading } = useGetBookByIdQuery(
     bookId || "",
@@ -99,7 +99,7 @@ export const AddBookModal = ({ open, openChange }: AddBookModalProps) => {
       author: "",
       isbn: "",
       publicationYear: "",
-      imageUrl: z.string(),
+      imageUrl: "",
       genreIds: [],
     },
   });
@@ -125,13 +125,16 @@ export const AddBookModal = ({ open, openChange }: AddBookModalProps) => {
   // Update form values when book data is loaded
   useEffect(() => {
     if (bookData?.value && isEditMode) {
+      // Extract genre IDs from the genres array
+      const genreIds = bookData.value.genres?.map((genre: Genre) => genre.id) || [];
+      
       form.reset({
         title: bookData.value.title || "",
         author: bookData.value.author || "",
         isbn: bookData.value.isbn || "",
         publicationYear: bookData.value.publicationYear?.toString() || "",
         imageUrl: bookData.value.imageUrl || "",
-        genreIds: bookData.value.genreIds || [],
+        genreIds: genreIds, // Set the genre IDs here
       });
 
       if (bookData.value.imageUrl) {
@@ -209,9 +212,9 @@ export const AddBookModal = ({ open, openChange }: AddBookModalProps) => {
 
   // Form submission handler
   const onSubmit: SubmitHandler<BookForm> = async (data) => {
+    console.log("formDAte,", data);
+    
     try {
-      console.log(data, ":oncusd");
-      
       if (isEditMode && bookId) {
         await updateBook({
           id: bookId,
@@ -220,9 +223,8 @@ export const AddBookModal = ({ open, openChange }: AddBookModalProps) => {
       } else {
         const updatedData = {
           ...data,
-          imageUrl: "https://ui.shadcn.com/placeholder.svg"
+          imageUrl: data.imageUrl || "https://ui.shadcn.com/placeholder.svg"
         };
-        console.log(updatedData);
         await addBook(updatedData).unwrap();
       }
 
@@ -233,9 +235,9 @@ export const AddBookModal = ({ open, openChange }: AddBookModalProps) => {
   };
 
   if (isLoadingGenre || genresData == undefined) {
-    console.log("Sttill loading", genresData);
-    return <div><Loader2 /></div>
+    return <div><Loader2 className="h-8 w-8 animate-spin" /></div>;
   }
+
   return (
     <Dialog open={open} onOpenChange={openChange}>
       <DialogTrigger asChild>
@@ -374,8 +376,7 @@ export const AddBookModal = ({ open, openChange }: AddBookModalProps) => {
                               </SelectTrigger>
                               <SelectContent>
                                 {genresData?.value && genresData.value.map((genre: Genre) => (
-                                  <SelectItem key={genre.id
-                                  } value={genre.id}>
+                                  <SelectItem key={genre.id} value={genre.id}>
                                     {genre.name}
                                   </SelectItem>
                                 ))}

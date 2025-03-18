@@ -1,5 +1,5 @@
 import { ApiTags } from "@/types/ApiTags";
-import { Book, BorrowedBook } from "@/types/Book";
+import { Book, BookRead, BorrowedBook } from "@/types/Book";
 import { ApiResponse } from "@/types/Response";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
@@ -14,7 +14,7 @@ export const bookApiSlice = createApi({
       query: () => "books",
       providesTags: [ApiTags.Book],
     }),
-    getBookById: builder.query<ApiResponse<Book>, string>({
+    getBookById: builder.query<ApiResponse<BookRead>, string>({
       query: (id) => `books/${id}`,
       providesTags: [ApiTags.Book],
     }),
