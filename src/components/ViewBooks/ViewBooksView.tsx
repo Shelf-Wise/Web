@@ -29,7 +29,7 @@ export const ViewBooksView = () => {
     ) {
       setOpenModal(true);
     }
-  }, [location.search, openModal]);
+  }, [location.search]);
 
   const handleDelete = async (id: string) => {
     try {
@@ -64,17 +64,7 @@ export const ViewBooksView = () => {
       replace: false,
     });
   };
-
-  // const handleAddNew = () => {
-  //   const newSearchParams = new URLSearchParams(location.search);
-  //   newSearchParams.set("modal", "add-book");
-  //   newSearchParams.delete("id");
-
-  //   navigate(`${location.pathname}?${newSearchParams.toString()}`, {
-  //     replace: false,
-  //   });
-  // };
-
+  
   if (isLoading) {
     return <div className="w-full mt-5 text-center">Loading books...</div>;
   }
