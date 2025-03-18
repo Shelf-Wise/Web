@@ -40,13 +40,13 @@ import {
   SelectValue,
 } from "../ui/select";
 import { useGetAllGenreQuery } from "@/state/genre/genreApiSlice";
+import { Genre } from "@/types/Genre";
 
 // Define Genre interface based on your API response
-interface Genre {
-  id: string;
-  name: string;
-  description: string | null;
-}
+// interface Genre {
+//   id: string;
+//   name: string;
+// }
 
 // Define the form schema with Zod
 const bookFormSchema = z.object({
@@ -211,7 +211,7 @@ export const AddBookModal = ({ open, openChange }: AddBookModalProps) => {
   const onSubmit: SubmitHandler<BookForm> = async (data) => {
     try {
       console.log(data, ":oncusd");
-      
+
       if (isEditMode && bookId) {
         await updateBook({
           id: bookId,
@@ -375,7 +375,7 @@ export const AddBookModal = ({ open, openChange }: AddBookModalProps) => {
                               <SelectContent>
                                 {genresData?.value && genresData.value.map((genre: Genre) => (
                                   <SelectItem key={genre.id
-                                  } value={genre.id}>
+                                  } value={genre.id ?? ""}>
                                     {genre.name}
                                   </SelectItem>
                                 ))}

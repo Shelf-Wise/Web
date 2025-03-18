@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/table";
 import { useGetAllGenreQuery, useAddGenreMutation } from "@/state/genre/genreApiSlice";
 
-const GenreHandle: React.FC = () => {
+export const GenreHandle: React.FC = () => {
   const [genreName, setGenreName] = useState("");
   const [editId, setEditId] = useState<string | null>(null);
   
@@ -128,5 +128,3 @@ const GenreHandle: React.FC = () => {
     </div>
   );
 };
-
-export default GenreHandle;

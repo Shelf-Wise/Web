@@ -22,7 +22,7 @@ export const genreApiSlice = createApi({
         url: `genres/${id}`,
         method: "GET",
       }),
-      providesTags: (result, error, id) => [{ type: "Genre", id }]
+      providesTags: (_result, _error, id) => [{ type: "Genre", id }]
     }),
     
     addGenre: builder.mutation<ApiResponse<Genre>, Genre>({
@@ -40,7 +40,7 @@ export const genreApiSlice = createApi({
         method: "PUT",
         body: genre,
       }),
-      invalidatesTags: (result, error, { id }) => [{ type: "Genre", id }, "Genre"]
+      invalidatesTags: (_result, _error, { id }) => [{ type: "Genre", id }, "Genre"]
     }),
     
     deleteGenre: builder.mutation<ApiResponse<void>, string>({

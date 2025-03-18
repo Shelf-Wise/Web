@@ -12,7 +12,7 @@ import { Separator } from "@radix-ui/react-separator";
 import { ViewBooks } from "./pages/ViewBooks";
 import { ViewMembers } from "./pages/ViewMembers";
 import { ReturnBooks } from "./pages/ReturnBooks";
-import GenreHandle from "./pages/Genre";
+import { GenreHandle } from "./pages/ManageGenre";
 
 const MainLayout = () => {
   return (
