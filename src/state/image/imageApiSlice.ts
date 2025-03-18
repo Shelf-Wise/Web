@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-const PUBLIC_URL = `${import.meta.env.VITE_PUBLIC_URL}/services/`;
+const PUBLIC_URL = `${import.meta.env.VITE_PUBLIC_URL}services/`;
 
 export const blobApiSlice = createApi({
     reducerPath: "blobApi",
