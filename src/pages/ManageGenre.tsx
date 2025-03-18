@@ -12,6 +12,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useGetAllGenreQuery, useAddGenreMutation } from "@/state/genre/genreApiSlice";
+import { toast } from "sonner"
+
 
 export const GenreHandle: React.FC = () => {
   const [genreName, setGenreName] = useState("");
@@ -30,17 +32,21 @@ export const GenreHandle: React.FC = () => {
       if (editId !== null) {
         // Update existing genre
         await addGenre({ id: editId, name: genreName }).unwrap();
+        
       } else {
         // Add new genre
         if (!genres.some((g) => g.name === genreName)) {
           await addGenre({ name: genreName }).unwrap();
         }
       }
-      
+      toast("Genre Added", {
+        description: `${genreName} has been created`,
+      })
       setGenreName("");
       setEditId(null);
       refetch(); // Refresh the genres list
     } catch (error) {
+      
       console.error("Failed to save genre:", error);
     }
   };
