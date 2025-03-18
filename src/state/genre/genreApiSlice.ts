@@ -25,7 +25,7 @@ export const genreApiSlice = createApi({
       providesTags: (_result, _error, id) => [{ type: "Genre", id }]
     }),
     
-    addGenre: builder.mutation<ApiResponse<Genre>, Genre>({
+    addGenre: builder.mutation({
       query: (genre) => ({
         url: "genres",
         method: "POST",

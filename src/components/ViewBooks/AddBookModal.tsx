@@ -42,12 +42,6 @@ import {
 import { useGetAllGenreQuery } from "@/state/genre/genreApiSlice";
 import { Genre } from "@/types/Genre";
 
-// Define Genre interface based on your API response
-// interface Genre {
-//   id: string;
-//   name: string;
-// }
-
 // Define the form schema with Zod
 const bookFormSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -78,11 +72,7 @@ export const AddBookModal = ({ open, openChange }: AddBookModalProps) => {
   const location = useLocation();
   const initialUrlChecked = useRef(false);
 
-  console.log("GeneD", genresData);
-
-
   const isEditMode = !!bookId;
-
 
   const { data: bookData, isLoading: isBookLoading } = useGetBookByIdQuery(
     bookId || "",
@@ -99,7 +89,7 @@ export const AddBookModal = ({ open, openChange }: AddBookModalProps) => {
       author: "",
       isbn: "",
       publicationYear: "",
-      imageUrl: z.string(),
+      imageUrl: "",
       genreIds: [],
     },
   });
@@ -125,13 +115,16 @@ export const AddBookModal = ({ open, openChange }: AddBookModalProps) => {
   // Update form values when book data is loaded
   useEffect(() => {
     if (bookData?.value && isEditMode) {
+      // Extract genre IDs from the genres array
+      const extractedGenreIds = bookData.value.genres?.map(genre => genre.id) || [];
+      
       form.reset({
         title: bookData.value.title || "",
         author: bookData.value.author || "",
         isbn: bookData.value.isbn || "",
         publicationYear: bookData.value.publicationYear?.toString() || "",
         imageUrl: bookData.value.imageUrl || "",
-        genreIds: bookData.value.genreIds || [],
+        genreIds: extractedGenreIds,
       });
 
       if (bookData.value.imageUrl) {
@@ -203,15 +196,13 @@ export const AddBookModal = ({ open, openChange }: AddBookModalProps) => {
 
   // Helper to get genre name by ID
   const getGenreNameById = (id: string): string => {
-    const genre = genresData?.value.find(g => g.id === id);
+    const genre = genresData?.value?.find(g => g.id === id);
     return genre?.name || "Unknown Genre";
   };
 
   // Form submission handler
   const onSubmit: SubmitHandler<BookForm> = async (data) => {
     try {
-      console.log(data, ":oncusd");
-
       if (isEditMode && bookId) {
         await updateBook({
           id: bookId,
@@ -220,9 +211,8 @@ export const AddBookModal = ({ open, openChange }: AddBookModalProps) => {
       } else {
         const updatedData = {
           ...data,
-          imageUrl: "https://ui.shadcn.com/placeholder.svg"
+          imageUrl: data.imageUrl || "https://ui.shadcn.com/placeholder.svg"
         };
-        console.log(updatedData);
         await addBook(updatedData).unwrap();
       }
 
@@ -232,10 +222,16 @@ export const AddBookModal = ({ open, openChange }: AddBookModalProps) => {
     }
   };
 
-  if (isLoadingGenre || genresData == undefined) {
-    console.log("Sttill loading", genresData);
-    return <div><Loader2 /></div>
+  // Show loading state while genres are being fetched
+  if (isLoadingGenre || genresData === undefined) {
+    return (
+      <div className="flex items-center justify-center p-8">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <span className="ml-2">Loading genres...</span>
+      </div>
+    );
   }
+
   return (
     <Dialog open={open} onOpenChange={openChange}>
       <DialogTrigger asChild>
@@ -374,8 +370,7 @@ export const AddBookModal = ({ open, openChange }: AddBookModalProps) => {
                               </SelectTrigger>
                               <SelectContent>
                                 {genresData?.value && genresData.value.map((genre: Genre) => (
-                                  <SelectItem key={genre.id
-                                  } value={genre.id ?? ""}>
+                                  <SelectItem key={genre.id} value={genre.id}>
                                     {genre.name}
                                   </SelectItem>
                                 ))}
