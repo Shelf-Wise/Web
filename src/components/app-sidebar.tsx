@@ -58,6 +58,10 @@ const data = {
           title: "Return Book",
           url: "/return-book",
         },
+        {
+          title: "Book Recommendations",
+          url: "/books/recommend",
+        },
       ],
     },
     {

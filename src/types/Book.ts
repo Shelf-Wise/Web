@@ -1,3 +1,4 @@
+import { Genre } from "./Genre";
 
 export type Book = {
   id: string;
@@ -8,6 +9,18 @@ export type Book = {
   status: BookStatus;
   imageUrl: string;
   genreIds: string[]
+};
+
+
+export type BookRecommendation = {
+  id: string;
+  title: string;
+  author: string;
+  publicationYear: number;
+  isbn: string;
+  status: BookStatus;
+  imageUrl: string;
+  genres: Genre[]
 };
 
 export const enum BookStatus {
