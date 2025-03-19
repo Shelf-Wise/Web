@@ -20,6 +20,8 @@ import {
   useUpdateMemberMutation,
 } from "@/state/member/MemberApiSlice";
 import { useEffect, useState } from "react";
+import { useUploadBlobMutation } from "@/state/image/imageApiSlice";
+import { Loader2 } from "lucide-react";
 
 const memberFormSchema = z.object({
   fullName: z.string().min(1, "Full name is required"),
@@ -48,6 +50,10 @@ export const MemberModal: React.FC<MemberModalProps> = ({
     skip: !memberId,
   });
   const [updateMember] = useUpdateMemberMutation();
+  const [uploadBlob, { isLoading: uploadingImage }] = useUploadBlobMutation();
+  const [previewUrl, setPreviewUrl] = useState<string>(
+    "https://ui.shadcn.com/placeholder.svg"
+  );
 
   const form = useForm<MemberForm>({
     resolver: zodResolver(memberFormSchema),
@@ -58,6 +64,7 @@ export const MemberModal: React.FC<MemberModalProps> = ({
       nic: "",
       telephone: "",
       dob: "",
+      imageUrl: "",
     },
   });
 
@@ -79,19 +86,55 @@ export const MemberModal: React.FC<MemberModalProps> = ({
         nic: memberData?.value.nic ?? "",
         telephone: memberData?.value.telephone ?? "",
         dob: memberData?.value.dob ?? "",
+        imageUrl: memberData?.value.imageUrl ?? "",
       });
+      
+      if (memberData?.value.imageUrl) {
+        setPreviewUrl(memberData.value.imageUrl);
+      }
+      
       console.log("form", form);
     }
   }, [memberData]);
+
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewUrl(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+
+      try {
+        const imageData = new FormData();
+        imageData.append('file', file);
+
+        const result = await uploadBlob(imageData).unwrap();
+
+        if (result?.url) {
+          form.setValue("imageUrl", result.url);
+        }
+      } catch (error) {
+        console.error("Failed to upload image:", error);
+      }
+    }
+  };
 
   const onSubmit: SubmitHandler<MemberForm> = async (data) => {
     console.log(data);
     console.log(form.getValues());
 
+    const memberData = {
+      ...data,
+      imageUrl: data.imageUrl || previewUrl
+    };
+
     if (memberId && memberId !== null) {
-      await updateMember({ id: memberId, ...data }).unwrap();
+      await updateMember({ id: memberId, ...memberData }).unwrap();
     } else {
-      await addMember(data).unwrap();
+      await addMember(memberData).unwrap();
     }
     openChange(false);
   };
@@ -115,13 +158,15 @@ export const MemberModal: React.FC<MemberModalProps> = ({
             <div className=" gap-4 py-4 flex">
               <div>
                 <img
-                  src="https://ui.shadcn.com/placeholder.svg"
-                  alt="Book Cover"
+                  src={previewUrl}
+                  alt="Member Profile"
                   width={400}
                   className="rounded-full"
                 />
               </div>
+
               <Separator orientation="vertical" />
+              
               <div className="space-y-4">
                 {/* fullName */}
                 <FormField
@@ -249,14 +294,21 @@ export const MemberModal: React.FC<MemberModalProps> = ({
                   <FormLabel htmlFor="imageUrl" className="text-right">
                     Profile
                   </FormLabel>
-                  <FormControl>
+                  <div className="col-span-3">
                     <Input
                       type="file"
-                      {...form.register("imageUrl")}
+                      accept="image/*"
                       id="imageUrl"
-                      className="col-span-3 text-muted-foreground"
+                      onChange={handleImageChange}
+                      className="text-muted-foreground"
                     />
-                  </FormControl>
+                    {uploadingImage && (
+                      <div className="flex items-center mt-2 text-sm text-muted-foreground">
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Uploading image...
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
@@ -268,8 +320,15 @@ export const MemberModal: React.FC<MemberModalProps> = ({
               >
                 Cancel
               </Button>
-              <Button type="submit" disabled={form.formState.isSubmitting}>
-                {form.formState.isSubmitting ? "Submitting" : "Submit"}
+              <Button type="submit" disabled={form.formState.isSubmitting || uploadingImage}>
+                {form.formState.isSubmitting || uploadingImage ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    {memberId ? "Updating..." : "Submitting..."}
+                  </>
+                ) : (
+                  memberId ? "Update Member" : "Add Member"
+                )}
               </Button>
             </DialogFooter>
           </form>
@@ -277,4 +336,4 @@ export const MemberModal: React.FC<MemberModalProps> = ({
       </DialogContent>
     </Dialog>
   );
-};
+}

@@ -9,7 +9,6 @@ import {
 } from "../ui/dialog";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-import { Label } from "../ui/label";
 import { Separator } from "../ui/separator";
 import {
   useAddBookMutation,
@@ -262,17 +261,8 @@ export const AddBookModal = ({ open, openChange }: AddBookModalProps) => {
                   <img
                     src={previewUrl}
                     alt="Book Cover"
-                    className="w-[200px] h-[300px] object-cover border rounded-md"
+                    className="w-[300px] h-[400px] object-cover border rounded-md"
                   />
-                  <div className="space-y-2">
-                    <Label htmlFor="coverImage">Book Cover</Label>
-                    <Input
-                      id="coverImage"
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageChange}
-                    />
-                  </div>
                 </div>
 
                 <Separator orientation="vertical" className="mx-4" />
@@ -352,6 +342,25 @@ export const AddBookModal = ({ open, openChange }: AddBookModalProps) => {
                     )}
                   />
 
+                  <FormField
+                    control={form.control}
+                    name="imageUrl"
+                    render={() => (
+                      <FormItem className="grid grid-cols-4 items-center gap-4">
+                        <FormLabel className="text-right">Book Cover</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleImageChange}
+                            className="col-span-3"
+                          />
+                        </FormControl>
+                        <FormMessage className="col-span-3 col-start-2" />
+                      </FormItem>
+                    )}
+                  />
+                  
                   {/* Genres Selection */}
                   <FormField
                     control={form.control}
