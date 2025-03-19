@@ -14,6 +14,7 @@ import { ViewMembers } from "./pages/ViewMembers";
 import { ReturnBooks } from "./pages/ReturnBooks";
 import { GenreHandle } from "./pages/ManageGenre";
 import { Toaster } from "sonner";
+import BookRecommendationPage from "./pages/BookRecommendationPage";
 
 const MainLayout = () => {
   return (
@@ -43,6 +44,7 @@ function App() {
           <Route element={<MainLayout />}>
             <Route path="/" element={<Dashboard />} />
             <Route path="/books" element={<ViewBooks />} />
+            <Route path="/books/recommend" element={<BookRecommendationPage />} />
             <Route path="/members" element={<ViewMembers />} />
             {/* <Route path="/borrow-book" element={<BorrowBooks />} /> */}
             <Route path="/return-book" element={<ReturnBooks />} />
