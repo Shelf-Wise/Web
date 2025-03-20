@@ -18,7 +18,10 @@ export const bookApiSlice = createApi({
       query: (id) => `books/${id}`,
       providesTags: [ApiTags.Book],
     }),
-    getBookRecommendationById: builder.query<ApiResponse<BookRecommendation>, string>({
+    getBookRecommendationById: builder.query<
+      ApiResponse<BookRecommendation>,
+      string
+    >({
       query: (id) => `books/recommend/${id}`,
       providesTags: [ApiTags.BookRecommendation],
     }),
@@ -61,21 +64,27 @@ export const bookApiSlice = createApi({
       }),
       invalidatesTags: [ApiTags.Book, ApiTags.Member],
     }),
-    getBorrowBooksByMember: builder.query<ApiResponse<Array<BorrowedBook>>, string>({
+    getBorrowBooksByMember: builder.query<
+      ApiResponse<Array<BorrowedBook>>,
+      string
+    >({
       query: (memberId) => ({
         url: `services/getBorrowedBooksBymemberId/${memberId}`,
         method: "GET",
       }),
       providesTags: (result) => {
         if (!result || !Array.isArray(result.value)) {
-          return [{ type: ApiTags.Member, id: 'LIST' }];
+          return [{ type: ApiTags.Member, id: "LIST" }];
         }
 
         return [
-          ...result.value.map((book) => ({ type: ApiTags.Book, id: book.bookId })),
-          { type: ApiTags.Member, id: 'LIST' }
+          ...result.value.map((book) => ({
+            type: ApiTags.Book,
+            id: book.bookId,
+          })),
+          { type: ApiTags.Member, id: "LIST" },
         ];
-      }
+      },
     }),
   }),
 });
