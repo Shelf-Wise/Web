@@ -7,25 +7,27 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-
 interface SignUpError {
   data?: {
     message: string;
   };
 }
 
-export function Registration({ className, ...props }: React.ComponentProps<"div">) {
+export function Registration({
+  className,
+  ...props
+}: React.ComponentProps<"div">) {
   const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [signUpUser, { isLoading, isError, error }] = useSignUpUserMutation();
-  const navigate = useNavigate();  
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       const response = await signUpUser({ userName, email, password }).unwrap();
-      console.log("API Response:", response); 
+      console.log("API Response:", response);
       if (response.isSuccess) {
         navigate("/login");
       } else {
@@ -34,7 +36,7 @@ export function Registration({ className, ...props }: React.ComponentProps<"div"
     } catch (err) {
       console.error("Signup error:", err);
     }
-  };  
+  };
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -74,6 +76,7 @@ export function Registration({ className, ...props }: React.ComponentProps<"div"
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  placeholder="************"
                   required
                 />
               </div>
@@ -95,7 +98,7 @@ export function Registration({ className, ...props }: React.ComponentProps<"div"
           </form>
           <div className="relative hidden bg-muted md:block">
             <img
-              src="https://ui.shadcn.com/placeholder.svg"
+              src="https://pub-fba0d713199d491abc5d6dd31e6b7d21.r2.dev/row-bookcases (1).jpg"
               alt="Image"
               className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
             />
@@ -110,7 +113,8 @@ export function Registration({ className, ...props }: React.ComponentProps<"div"
         and{" "}
         <a href="#" className="underline">
           Privacy Policy
-        </a>.
+        </a>
+        .
       </div>
     </div>
   );

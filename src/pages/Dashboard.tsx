@@ -23,8 +23,8 @@ import {
   Cell,
 } from "recharts";
 import { BookOpen, Users, BookMarked, BookUp, AlertCircle } from "lucide-react";
-import { useGetBooksQuery } from "../state/book/BookApiSlice"; // Adjust the import path as needed
-import { BookStatus, mapBookEnum } from "../types/Book"; // Adjust the import path as needed
+import { useGetBooksQuery } from "../state/book/BookApiSlice";
+import { BookStatus, mapBookEnum } from "../types/Book";
 import { useGetAllGenreQuery } from "@/state/genre/genreApiSlice";
 import { useGetMembersQuery } from "@/state/member/MemberApiSlice";
 
@@ -135,24 +135,24 @@ const Dashboard = () => {
       setMemberBorrowStats(memberStats);
 
       // Generate monthly borrowing trend (simulated from borrowed books)
-      const borrowedCount = booksData.value.filter(
-        (book) => book.status === BookStatus.BORROWED
-      ).length;
-      const monthlyData = [
-        { month: "Jan", books: Math.floor(borrowedCount * 0.7) },
-        { month: "Feb", books: Math.floor(borrowedCount * 0.8) },
-        { month: "Mar", books: Math.floor(borrowedCount * 0.9) },
-        { month: "Apr", books: borrowedCount },
-        { month: "May", books: Math.floor(borrowedCount * 1.1) },
-        { month: "Jun", books: Math.floor(borrowedCount * 1.2) },
-        { month: "Jul", books: Math.floor(borrowedCount * 1.1) },
-        { month: "Aug", books: Math.floor(borrowedCount * 0.9) },
-        { month: "Sep", books: Math.floor(borrowedCount * 1.0) },
-        { month: "Oct", books: Math.floor(borrowedCount * 1.1) },
-        { month: "Nov", books: Math.floor(borrowedCount * 1.2) },
-        { month: "Dec", books: Math.floor(borrowedCount * 1.0) },
-      ];
-      setMonthlyBorrowingTrend(monthlyData);
+      // const borrowedCount = booksData.value.filter(
+      //   (book) => book.status === BookStatus.BORROWED
+      // ).length;
+      // const monthlyData = [
+      //   { month: "Jan", books: Math.floor(borrowedCount * 0.7) },
+      //   { month: "Feb", books: Math.floor(borrowedCount * 0.8) },
+      //   { month: "Mar", books: Math.floor(borrowedCount * 0.9) },
+      //   { month: "Apr", books: borrowedCount },
+      //   { month: "May", books: Math.floor(borrowedCount * 1.1) },
+      //   { month: "Jun", books: Math.floor(borrowedCount * 1.2) },
+      //   { month: "Jul", books: Math.floor(borrowedCount * 1.1) },
+      //   { month: "Aug", books: Math.floor(borrowedCount * 0.9) },
+      //   { month: "Sep", books: Math.floor(borrowedCount * 1.0) },
+      //   { month: "Oct", books: Math.floor(borrowedCount * 1.1) },
+      //   { month: "Nov", books: Math.floor(borrowedCount * 1.2) },
+      //   { month: "Dec", books: Math.floor(borrowedCount * 1.0) },
+      // ];
+      // setMonthlyBorrowingTrend(monthlyData);
 
       setIsLoading(false);
     }
@@ -278,12 +278,12 @@ const Dashboard = () => {
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="books">Books</TabsTrigger>
           <TabsTrigger value="members">Members</TabsTrigger>
-          <TabsTrigger value="borrowing">Borrowing Activity</TabsTrigger>
+          {/* <TabsTrigger value="borrowing">Borrowing Activity</TabsTrigger> */}
         </TabsList>
 
         {/* Overview Tab */}
         <TabsContent value="overview" className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Card>
               <CardHeader>
                 <CardTitle>Book Collection by Genre</CardTitle>
@@ -320,7 +320,7 @@ const Dashboard = () => {
               </CardContent>
             </Card>
 
-            <Card>
+            {/* <Card>
               <CardHeader>
                 <CardTitle>Monthly Borrowing Trends</CardTitle>
                 <CardDescription>
@@ -349,8 +349,8 @@ const Dashboard = () => {
                   </LineChart>
                 </div>
               </CardContent>
-            </Card>
-          </div>
+            </Card> 
+          </div> */}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Card>
