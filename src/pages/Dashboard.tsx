@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -41,6 +42,8 @@ const COLORS = [
 const Dashboard = () => {
   // State for tabs
   const [activeTab, setActiveTab] = useState("overview");
+
+  console.log("activeTab", activeTab);
 
   // Fetch data using RTK Query
   const {
@@ -306,7 +309,7 @@ const Dashboard = () => {
                     >
                       {booksByGenre.slice(0, 6).map((entry, index) => (
                         <Cell
-                          key={`cell-${index}`}
+                          key={`cell-${entry.name}-${index}`}
                           fill={COLORS[index % COLORS.length]}
                         />
                       ))}
@@ -593,9 +596,9 @@ const Dashboard = () => {
                       totalBorrowed /
                       Math.max(
                         1,
-                        membersData.value.filter(
+                        membersData?.value?.filter(
                           (m) => m.noOfBooksBorrowed && m.noOfBooksBorrowed > 0
-                        ).length
+                        )?.length || 0
                       )
                     ).toFixed(1)}
                   </p>
@@ -618,16 +621,19 @@ const Dashboard = () => {
                     data={[
                       {
                         name: "Active Members",
-                        value: membersData.value.filter(
-                          (m) => m.noOfBooksBorrowed && m.noOfBooksBorrowed > 0
-                        ).length,
+                        value:
+                          membersData?.value?.filter(
+                            (m) =>
+                              m.noOfBooksBorrowed && m.noOfBooksBorrowed > 0
+                          ).length || 0,
                       },
                       {
                         name: "Inactive Members",
-                        value: membersData.value.filter(
-                          (m) =>
-                            !m.noOfBooksBorrowed || m.noOfBooksBorrowed === 0
-                        ).length,
+                        value:
+                          membersData?.value?.filter(
+                            (m) =>
+                              !m.noOfBooksBorrowed || m.noOfBooksBorrowed === 0
+                          ).length || 0,
                       },
                     ]}
                     cx={400}
@@ -710,11 +716,9 @@ const Dashboard = () => {
                 <div className="bg-green-50 p-4 rounded-lg">
                   <p className="text-gray-500 text-sm mb-1">Available Books</p>
                   <p className="text-2xl font-bold">
-                    {
-                      booksData.value.filter(
-                        (book) => book.status === BookStatus.AVAILABLE
-                      ).length
-                    }
+                    {booksData?.value?.filter(
+                      (book) => book.status === BookStatus.AVAILABLE
+                    )?.length || 0}
                   </p>
                 </div>
               </CardContent>

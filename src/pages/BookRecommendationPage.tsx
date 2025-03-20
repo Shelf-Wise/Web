@@ -1,51 +1,50 @@
-import React, { useState } from 'react';
-import { useGetBookRecommendationByIdQuery } from '../state/book/BookApiSlice';
+import React, { useState } from "react";
+import { useGetBookRecommendationByIdQuery } from "../state/book/BookApiSlice";
 import {
   Card,
   CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+  CardTitle,
+} from "@/components/ui/card";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
-} from '@/components/ui/select';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Skeleton } from '@/components/ui/skeleton';
-import {
-  BookOpenText,
-  UserCircle,
-  BookIcon,
-  RefreshCcw
-} from 'lucide-react';
+  SelectValue,
+} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import { BookOpenText, UserCircle, BookIcon, RefreshCcw } from "lucide-react";
 
 // Import your types
-import { BookRecommendation, BookStatus } from '../types/Book';
-import { useGetMembersQuery } from '@/state/member/MemberApiSlice';
+import { BookRecommendation, BookStatus } from "../types/Book";
+import { useGetMembersQuery } from "@/state/member/MemberApiSlice";
 
 const BookRecommendationPage: React.FC = () => {
-  const [selectedMemberId, setSelectedMemberId] = useState<string>('');
-  const { data: membersResponse, isLoading: isMembersLoading } = useGetMembersQuery();
+  const [selectedMemberId, setSelectedMemberId] = useState<string>("");
+  const { data: membersResponse, isLoading: isMembersLoading } =
+    useGetMembersQuery();
   const {
     data: recommendationsResponse,
     isLoading: isRecommendationsLoading,
-    refetch: refetchRecommendations
+    refetch: refetchRecommendations,
   } = useGetBookRecommendationByIdQuery(selectedMemberId, {
-    skip: !selectedMemberId
+    skip: !selectedMemberId,
   });
 
   // Access data using your ApiResponse structure
   const members = membersResponse?.value || [];
-  const recommendations = recommendationsResponse?.value || [];
+  const recommendations = Array.isArray(recommendationsResponse?.value)
+    ? recommendationsResponse?.value
+    : recommendationsResponse?.value
+    ? [recommendationsResponse.value]
+    : [];
 
   console.log(recommendations);
-
 
   const handleMemberChange = (value: string) => {
     setSelectedMemberId(value);
@@ -68,13 +67,18 @@ const BookRecommendationPage: React.FC = () => {
               <UserCircle className="mr-2" />
               Select Member
             </CardTitle>
-            <CardDescription>Choose a member to get personalized book recommendations</CardDescription>
+            <CardDescription>
+              Choose a member to get personalized book recommendations
+            </CardDescription>
           </CardHeader>
           <CardContent>
             {isMembersLoading ? (
               <Skeleton className="h-10 w-full" />
             ) : (
-              <Select onValueChange={handleMemberChange} value={selectedMemberId}>
+              <Select
+                onValueChange={handleMemberChange}
+                value={selectedMemberId}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Select a member" />
                 </SelectTrigger>
@@ -199,7 +203,10 @@ const BookCard: React.FC<BookCardProps> = ({ book }) => {
           <span className="capitalize">
             <Badge
               variant={
-                statusVariant[book.status] as "available" | "borrowed" | "damaged"
+                statusVariant[book.status] as
+                  | "available"
+                  | "borrowed"
+                  | "damaged"
               }
               className="px-3 py-1"
             >
