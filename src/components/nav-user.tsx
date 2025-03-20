@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronsUpDown, DollarSign, LogOut, Tag } from "lucide-react";
+import { ChevronsUpDown, LogOut, Tag } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -19,7 +19,6 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { useNavigate } from "react-router-dom";
-import { Separator } from "@radix-ui/react-separator";
 
 export function NavUser({
   user,

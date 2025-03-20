@@ -28,16 +28,16 @@ import { BookStatus, mapBookEnum } from "../types/Book";
 import { useGetAllGenreQuery } from "@/state/genre/genreApiSlice";
 import { useGetMembersQuery } from "@/state/member/MemberApiSlice";
 
-const COLORS = [
-  "#0088FE",
-  "#00C49F",
-  "#FFBB28",
-  "#FF8042",
-  "#8884d8",
-  "#82ca9d",
-  "#ffc658",
-  "#8dd1e1",
-];
+// const COLORS = [
+//   "#0088FE",
+//   "#00C49F",
+//   "#FFBB28",
+//   "#FF8042",
+//   "#8884d8",
+//   "#82ca9d",
+//   "#ffc658",
+//   "#8dd1e1",
+// ];
 
 const Dashboard = () => {
   // State for tabs
@@ -72,9 +72,9 @@ const Dashboard = () => {
   const [memberBorrowStats, setMemberBorrowStats] = useState<
     { name: string; count: number }[]
   >([]);
-  const [monthlyBorrowingTrend, setMonthlyBorrowingTrend] = useState<
-    { month: string; books: number }[]
-  >([]);
+  const [monthlyBorrowingTrend] = useState<{ month: string; books: number }[]>(
+    []
+  );
   const [isLoading, setIsLoading] = useState(true);
 
   // Process data when it's available
