@@ -8,9 +8,8 @@ export type Book = {
   isbn: string;
   status: BookStatus;
   imageUrl: string;
-  genreIds: string[]
+  genreIds: string[];
 };
-
 
 export type BookRecommendation = {
   id: string;
@@ -20,7 +19,7 @@ export type BookRecommendation = {
   isbn: string;
   status: BookStatus;
   imageUrl: string;
-  genres: Genre[]
+  genres: Genre[];
 };
 
 export const enum BookStatus {
@@ -41,6 +40,7 @@ export type BookBorrow = {
   memberId: string;
   borrowDate: string;
   dueDate: string;
+  fine?: number;
 };
 
 export interface BorrowedBook {

@@ -14,41 +14,44 @@ export const genreApiSlice = createApi({
         url: "genres",
         method: "GET",
       }),
-      providesTags: ["Genre"]
+      providesTags: ["Genre"],
     }),
-    
+
     getGenreById: builder.query<ApiResponse<Genre>, string>({
       query: (id) => ({
         url: `genres/${id}`,
         method: "GET",
       }),
-      providesTags: (_result, _error, id) => [{ type: "Genre", id }]
+      providesTags: (_result, _error, id) => [{ type: "Genre", id }],
     }),
-    
+
     addGenre: builder.mutation({
       query: (genre) => ({
         url: "genres",
         method: "POST",
         body: genre,
       }),
-      invalidatesTags: ["Genre"]
+      invalidatesTags: ["Genre"],
     }),
-    
+
     updateGenre: builder.mutation<ApiResponse<Genre>, Genre>({
       query: (genre) => ({
         url: `genres/${genre.id}`,
         method: "PUT",
         body: genre,
       }),
-      invalidatesTags: (_result, _error, { id }) => [{ type: "Genre", id }, "Genre"]
+      invalidatesTags: (_result, _error, { id }) => [
+        { type: "Genre", id },
+        "Genre",
+      ],
     }),
-    
+
     deleteGenre: builder.mutation<ApiResponse<void>, string>({
       query: (id) => ({
         url: `genres/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["Genre"]
+      invalidatesTags: ["Genre"],
     }),
   }),
 });
@@ -58,5 +61,5 @@ export const {
   useGetGenreByIdQuery,
   useAddGenreMutation,
   useUpdateGenreMutation,
-  useDeleteGenreMutation
+  useDeleteGenreMutation,
 } = genreApiSlice;
