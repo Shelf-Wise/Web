@@ -114,9 +114,9 @@ export const AddBookModal = ({ open, openChange }: AddBookModalProps) => {
   // Update form values when book data is loaded
   useEffect(() => {
     if (bookData?.value && isEditMode) {
-      // Extract genre IDs from the genres array
-      const extractedGenreIds = bookData.value.genres?.map(genre => genre.id) || [];
-      
+      // Extract genre IDs directly from the genreIds property
+      const extractedGenreIds = bookData.value.genreIds || [];
+
       form.reset({
         title: bookData.value.title || "",
         author: bookData.value.author || "",
@@ -159,7 +159,7 @@ export const AddBookModal = ({ open, openChange }: AddBookModalProps) => {
 
       try {
         const imageData = new FormData();
-        imageData.append('file', file);
+        imageData.append("file", file);
 
         const result = await uploadBlob(imageData).unwrap();
 
@@ -189,13 +189,13 @@ export const AddBookModal = ({ open, openChange }: AddBookModalProps) => {
     const currentGenreIds = form.getValues("genreIds");
     form.setValue(
       "genreIds",
-      currentGenreIds.filter(id => id !== genreIdToRemove)
+      currentGenreIds.filter((id) => id !== genreIdToRemove)
     );
   };
 
   // Helper to get genre name by ID
   const getGenreNameById = (id: string): string => {
-    const genre = genresData?.value?.find(g => g.id === id);
+    const genre = genresData?.value?.find((g) => g.id === id);
     return genre?.name || "Unknown Genre";
   };
 
@@ -205,12 +205,12 @@ export const AddBookModal = ({ open, openChange }: AddBookModalProps) => {
       if (isEditMode && bookId) {
         await updateBook({
           id: bookId,
-          ...data
+          ...data,
         }).unwrap();
       } else {
         const updatedData = {
           ...data,
-          imageUrl: data.imageUrl || "https://ui.shadcn.com/placeholder.svg"
+          imageUrl: data.imageUrl || "https://ui.shadcn.com/placeholder.svg",
         };
         await addBook(updatedData).unwrap();
       }
@@ -360,14 +360,16 @@ export const AddBookModal = ({ open, openChange }: AddBookModalProps) => {
                       </FormItem>
                     )}
                   />
-                  
+
                   {/* Genres Selection */}
                   <FormField
                     control={form.control}
                     name="genreIds"
                     render={({ field }) => (
                       <FormItem className="grid grid-cols-4 items-start gap-4">
-                        <FormLabel className="text-right pt-2">Genres</FormLabel>
+                        <FormLabel className="text-right pt-2">
+                          Genres
+                        </FormLabel>
                         <div className="col-span-3 space-y-3">
                           <div className="flex items-center gap-2">
                             <Select
@@ -378,12 +380,14 @@ export const AddBookModal = ({ open, openChange }: AddBookModalProps) => {
                                 <SelectValue placeholder="Select Genre" />
                               </SelectTrigger>
                               <SelectContent>
-                                {genresData?.value && genresData.value.map((genre: Genre) => (
-                                  <SelectItem key={genre.id} value={genre.id}>
-                                    {genre.name}
-                                  </SelectItem>
-                                ))}
-                                {(!genresData?.value || genresData.value.length === 0) && (
+                                {genresData?.value &&
+                                  genresData.value.map((genre: Genre) => (
+                                    <SelectItem key={genre.id} value={genre.id}>
+                                      {genre.name}
+                                    </SelectItem>
+                                  ))}
+                                {(!genresData?.value ||
+                                  genresData.value.length === 0) && (
                                   <SelectItem value="" disabled>
                                     No genres available
                                   </SelectItem>
@@ -441,7 +445,10 @@ export const AddBookModal = ({ open, openChange }: AddBookModalProps) => {
                 >
                   Cancel
                 </Button>
-                <Button type="submit" disabled={form.formState.isSubmitting || uploadingImage}>
+                <Button
+                  type="submit"
+                  disabled={form.formState.isSubmitting || uploadingImage}
+                >
                   {form.formState.isSubmitting || uploadingImage ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />

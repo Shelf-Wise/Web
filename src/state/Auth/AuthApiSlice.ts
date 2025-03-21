@@ -4,13 +4,13 @@ const PUBLIC_URL = import.meta.env.VITE_PUBLIC_URL;
 
 export const AuthApiSlice = createApi({
   reducerPath: "userApi",
-  baseQuery: fetchBaseQuery({ baseUrl: PUBLIC_URL }),
+  baseQuery: fetchBaseQuery({ baseUrl: "https://localhost:7087" }), 
   endpoints: (builder) => ({
     signUpUser: builder.mutation({
       query: (user) => {
-        console.log("Sending Request Payload:", user);
+        console.log("Sending Request Payload:", user); 
         return {
-          url: "signUp",
+          url: "authentication/signUp",
           method: "POST",
           body: user,
         };
@@ -20,7 +20,7 @@ export const AuthApiSlice = createApi({
       query: (user) => {
         console.log("Sending Request Payload:", user);
         return {
-          url: "signIn",
+          url: "authentication/signIn",
           method: "POST",
           body: user,
         };
@@ -29,4 +29,4 @@ export const AuthApiSlice = createApi({
   }),
 });
 
-export const { useSignUpUserMutation } = AuthApiSlice;
+export const { useSignUpUserMutation, useSignInUserMutation } = AuthApiSlice;

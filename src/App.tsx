@@ -1,4 +1,11 @@
-import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
+// src/App.tsx
+import {
+  BrowserRouter,
+  Navigate,
+  Outlet,
+  Route,
+  Routes,
+} from "react-router-dom";
 import { LoginPage } from "./pages/Login";
 import { RegistrationPage } from "./pages/Registration";
 import Dashboard from "./pages/Dashboard";
@@ -15,6 +22,9 @@ import { ReturnBooks } from "./pages/ReturnBooks";
 import { GenreHandle } from "./pages/ManageGenre";
 import { Toaster } from "sonner";
 import BookRecommendationPage from "./pages/BookRecommendationPage";
+import ProtectedRoute from "./ProtectedRoute";
+import { Provider } from "react-redux";
+import { store } from "./state/store"; // Update this path to match your store location
 
 const MainLayout = () => {
   return (
@@ -36,23 +46,30 @@ const MainLayout = () => {
 
 function App() {
   return (
-    <BrowserRouter>
-      <SidebarProvider>
+    <Provider store={store}>
+      <BrowserRouter>
         <Routes>
+          {/* Public routes */}
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/Registration" element={<RegistrationPage />} />
-          <Route element={<MainLayout />}>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/books" element={<ViewBooks />} />
-            <Route path="/books/recommend" element={<BookRecommendationPage />} />
-            <Route path="/members" element={<ViewMembers />} />
-            {/* <Route path="/borrow-book" element={<BorrowBooks />} /> */}
-            <Route path="/return-book" element={<ReturnBooks />} />
-            <Route path="/genre" element={<GenreHandle />} />
+          <Route path="/registration" element={<RegistrationPage />} />
+          <Route path="/books/recommend" element={<BookRecommendationPage />} />
+
+          {/* Protected routes with MainLayout */}
+          <Route element={<ProtectedRoute />}>
+            <Route element={<MainLayout />}>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/books" element={<ViewBooks />} />
+              <Route path="/members" element={<ViewMembers />} />
+              <Route path="/return-book" element={<ReturnBooks />} />
+              <Route path="/genre" element={<GenreHandle />} />
+            </Route>
           </Route>
+
+          {/* Redirect any unknown routes to dashboard if authenticated, or login if not */}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
-      </SidebarProvider>
-    </BrowserRouter>
+      </BrowserRouter>
+    </Provider>
   );
 }
 

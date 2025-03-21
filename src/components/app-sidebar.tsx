@@ -17,10 +17,13 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 
+console.log(localStorage.getItem("email") || "");
+console.log(localStorage.getItem("userName") || "");
+
 const data = {
   user: {
-    name: "shadcn",
-    email: "m@example.com",
+    name: localStorage.getItem("userName") || "",
+    email: localStorage.getItem("email") || "",
     avatar: "/avatars/shadcn.jpg",
   },
   teams: {
