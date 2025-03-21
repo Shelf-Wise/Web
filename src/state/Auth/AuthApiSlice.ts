@@ -10,7 +10,7 @@ export const AuthApiSlice = createApi({
       query: (user) => {
         console.log("Sending Request Payload:", user);
         return {
-          url: "authentication/signUp",
+          url: "signUp",
           method: "POST",
           body: user,
         };
@@ -20,7 +20,7 @@ export const AuthApiSlice = createApi({
       query: (user) => {
         console.log("Sending Request Payload:", user);
         return {
-          url: "authentication/signIn",
+          url: "signIn",
           method: "POST",
           body: user,
         };
