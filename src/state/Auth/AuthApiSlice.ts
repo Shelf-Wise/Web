@@ -1,8 +1,10 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
+const PUBLIC_URL = import.meta.env.VITE_PUBLIC_URL;
+
 export const AuthApiSlice = createApi({
   reducerPath: "userApi",
-  baseQuery: fetchBaseQuery({ baseUrl: "https://localhost:7087" }),
+  baseQuery: fetchBaseQuery({ baseUrl: PUBLIC_URL }),
   endpoints: (builder) => ({
     signUpUser: builder.mutation({
       query: (user) => {
