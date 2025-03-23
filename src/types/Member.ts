@@ -7,5 +7,6 @@ export type Member = {
   email?: string;
   dob?: string;
   imageUrl?: string;
+  imageURL?: string;
   noOfBooksBorrowed?: number;
 };
