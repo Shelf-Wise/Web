@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useSignInUserMutation } from "../state/Auth/AuthApiSlice"; // Update this path
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 export function LoginForm({
   className,
@@ -50,7 +51,7 @@ export function LoginForm({
       // The actual navigation happens in the useEffect above
     } catch (err) {
       console.error("Failed to login:", err);
-      setError("Failed to login. Please check your credentials.");
+      toast.success("Failed to login. Please check your credentials.");
     }
   };
 

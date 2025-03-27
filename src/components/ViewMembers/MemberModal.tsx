@@ -22,6 +22,7 @@ import {
 import { useEffect, useState } from "react";
 import { useUploadBlobMutation } from "@/state/image/imageApiSlice";
 import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 const memberFormSchema = z.object({
   fullName: z.string().min(1, "Full name is required"),
@@ -88,11 +89,11 @@ export const MemberModal: React.FC<MemberModalProps> = ({
         dob: memberData?.value.dob ?? "",
         imageUrl: memberData?.value.imageUrl ?? "",
       });
-      
+
       if (memberData?.value.imageUrl) {
         setPreviewUrl(memberData.value.imageUrl);
       }
-      
+
       console.log("form", form);
     }
   }, [memberData]);
@@ -100,7 +101,6 @@ export const MemberModal: React.FC<MemberModalProps> = ({
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreviewUrl(reader.result as string);
@@ -109,15 +109,17 @@ export const MemberModal: React.FC<MemberModalProps> = ({
 
       try {
         const imageData = new FormData();
-        imageData.append('file', file);
+        imageData.append("file", file);
 
         const result = await uploadBlob(imageData).unwrap();
 
         if (result?.url) {
           form.setValue("imageUrl", result.url);
         }
+        toast.success("Image uploaded successfully");
       } catch (error) {
         console.error("Failed to upload image:", error);
+        toast.error("Oops! Something went wrong");
       }
     }
   };
@@ -128,7 +130,7 @@ export const MemberModal: React.FC<MemberModalProps> = ({
 
     const memberData = {
       ...data,
-      imageUrl: data.imageUrl || previewUrl
+      imageUrl: data.imageUrl || previewUrl,
     };
 
     if (memberId && memberId !== null) {
@@ -136,6 +138,7 @@ export const MemberModal: React.FC<MemberModalProps> = ({
     } else {
       await addMember(memberData).unwrap();
     }
+    toast.success("Submitted successfully");
     openChange(false);
   };
 
@@ -166,7 +169,7 @@ export const MemberModal: React.FC<MemberModalProps> = ({
               </div>
 
               <Separator orientation="vertical" />
-              
+
               <div className="space-y-4">
                 {/* fullName */}
                 <FormField
@@ -320,14 +323,19 @@ export const MemberModal: React.FC<MemberModalProps> = ({
               >
                 Cancel
               </Button>
-              <Button type="submit" disabled={form.formState.isSubmitting || uploadingImage}>
+              <Button
+                type="submit"
+                disabled={form.formState.isSubmitting || uploadingImage}
+              >
                 {form.formState.isSubmitting || uploadingImage ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     {memberId ? "Updating..." : "Submitting..."}
                   </>
+                ) : memberId ? (
+                  "Update Member"
                 ) : (
-                  memberId ? "Update Member" : "Add Member"
+                  "Add Member"
                 )}
               </Button>
             </DialogFooter>
@@ -336,4 +344,4 @@ export const MemberModal: React.FC<MemberModalProps> = ({
       </DialogContent>
     </Dialog>
   );
-}
+};

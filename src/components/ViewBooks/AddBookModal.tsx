@@ -40,6 +40,7 @@ import {
 } from "../ui/select";
 import { useGetAllGenreQuery } from "@/state/genre/genreApiSlice";
 import { Genre } from "@/types/Genre";
+import { toast } from "sonner";
 
 // Define the form schema with Zod
 const bookFormSchema = z.object({
@@ -166,8 +167,11 @@ export const AddBookModal = ({ open, openChange }: AddBookModalProps) => {
         if (result?.url) {
           form.setValue("imageUrl", result.url);
         }
+
+        toast.success("Image uploaded successfully");
       } catch (error) {
         console.error("Failed to upload image:", error);
+        toast.error("Oops! Something went wrong.");
       }
     }
   };
@@ -216,8 +220,12 @@ export const AddBookModal = ({ open, openChange }: AddBookModalProps) => {
       }
 
       openChange(false);
+      toast.success(
+        isEditMode ? "Book updated successfully" : "Book added successfully"
+      );
     } catch (error) {
       console.error("Failed to save book:", error);
+      toast.error("Oops! Something went wrong.");
     }
   };
 
