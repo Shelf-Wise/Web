@@ -17,6 +17,8 @@ export function LoginForm({
     password: "",
   });
   const [error, setError] = useState("");
+  console.log(error);
+  
   const [signInUser, { isLoading, isSuccess, data }] = useSignInUserMutation();
   const navigate = useNavigate();
 
@@ -48,10 +50,12 @@ export function LoginForm({
 
     try {
       await signInUser(formState);
+      toast.success("Please check your credentials.");
+
       // The actual navigation happens in the useEffect above
     } catch (err) {
       console.error("Failed to login:", err);
-      toast.success("Failed to login. Please check your credentials.");
+      toast.error("Please check your credentials.");
     }
   };
 
@@ -67,12 +71,6 @@ export function LoginForm({
                   Login to your ShelfWise account
                 </p>
               </div>
-
-              {error && (
-                <div className="p-3 bg-red-100 text-red-800 rounded-md text-sm">
-                  {error}
-                </div>
-              )}
 
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
