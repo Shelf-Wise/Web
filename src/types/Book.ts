@@ -59,13 +59,14 @@ export interface BorrowedBook {
 
 
 export type Book = {
-  bookId: string;
+  id: string;
   title: string;
   author: string;
   publicationYear: number;
   isAvailable: number;
   imageUrl?: string;
   isbn: string;
+  status:  BookStatus;
   memberId?: string;
   genreIds?: string[];
   genres?: {

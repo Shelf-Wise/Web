@@ -8,6 +8,7 @@ import {
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { AddBookModal } from "./AddBookModal";
+import { toast } from "sonner";
 
 export const ViewBooksView = () => {
   const [openModal, setOpenModal] = useState(false);
@@ -34,7 +35,7 @@ export const ViewBooksView = () => {
   const handleDelete = async (id: string) => {
     try {
       await deleteBook(id).unwrap();
-      console.log("Book deleted successfully");
+      toast.success("Book deleted successfully");
     } catch (error) {
       console.error("Failed to delete book:", error);
     }
