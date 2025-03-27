@@ -1,17 +1,12 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate } from "react-router-dom";
 import { useSignUpUserMutation } from "@/state/Auth/AuthApiSlice";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-
-interface SignUpError {
-  data?: {
-    message: string;
-  };
-}
+import { toast } from "sonner";
 
 export function Registration({
   className,
@@ -20,21 +15,52 @@ export function Registration({
   const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [signUpUser, { isLoading, isError, error }] = useSignUpUserMutation();
+  const [signUpUser, { isLoading }] = useSignUpUserMutation();
   const navigate = useNavigate();
+
+  const validatePassword = (password: string): boolean => {
+    // Basic password validation
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasNumber = /[0-9]/.test(password);
+
+    return  hasLowerCase && hasNumber;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validate inputs
+    if (!userName.trim()) {
+      toast.error("Username is required");
+      return;
+    }
+
+    if (!email.trim() || !email.includes('@')) {
+      toast.error("Please enter a valid email address");
+      return;
+    }
+
+    if (!validatePassword(password)) {
+      toast.error(
+        "Password must include a character and a number"
+      );
+      return;
+    }
+
     try {
       const response = await signUpUser({ userName, email, password }).unwrap();
-      console.log("API Response:", response);
+      
       if (response.isSuccess) {
+        toast.success("Registration successful!");
         navigate("/login");
       } else {
-        console.error("Error:", response.error);
+        // Handle backend validation errors
+        const errorMessage = response.error?.description || "Registration failed";
+        toast.error(errorMessage);
       }
     } catch (err) {
       console.error("Signup error:", err);
+      toast.error("An unexpected error occurred");
     }
   };
 
@@ -79,15 +105,13 @@ export function Registration({
                   placeholder="************"
                   required
                 />
+                <p className="text-xs text-muted-foreground">
+                  Password must include a character and a number
+                </p>
               </div>
               <Button type="submit" className="w-full" disabled={isLoading}>
                 {isLoading ? "Signing Up..." : "Sign Up"}
               </Button>
-              {isError && (
-                <p className="text-red-500 text-sm">
-                  {(error as SignUpError)?.data?.message || "Signup failed!"}
-                </p>
-              )}
               <div className="text-center text-sm">
                 Already have an account?{" "}
                 <a href="/login" className="underline underline-offset-4">
