@@ -1,15 +1,15 @@
 import { Genre } from "./Genre";
 
-export type Book = {
-  id: string;
-  title: string;
-  author: string;
-  publicationYear: number;
-  isbn: string;
-  status: BookStatus;
-  imageUrl: string;
-  genreIds: string[];
-};
+// export type Book = {
+//   id: string;
+//   title: string;
+//   author: string;
+//   publicationYear: number;
+//   isbn: string;
+//   status: BookStatus;
+//   imageUrl: string;
+//   genreIds: string[];
+// };
 
 export type BookRecommendation = {
   id: string;
@@ -56,3 +56,24 @@ export interface BorrowedBook {
   returnDate: string | null;
   createdAt: string;
 }
+
+
+export type Book = {
+  bookId: string;
+  title: string;
+  author: string;
+  publicationYear: number;
+  isAvailable: number;
+  imageUrl?: string;
+  isbn: string;
+  memberId?: string;
+  genreIds?: string[];
+  genres?: {
+    name: string;
+    id: string;
+    createdBy: string;
+    createdAt: string;
+    updatedBy: string;
+    updateAt: string;
+  }[];
+};
