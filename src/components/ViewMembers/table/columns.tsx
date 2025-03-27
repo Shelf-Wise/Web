@@ -32,7 +32,7 @@ export const columns = ({
       return (
         <div className="flex items-center gap-2">
           <Avatar>
-            <AvatarImage src={`${row.original.imageUrl}`} />
+            <AvatarImage src={`${row.original.imageURL}`} />
             <AvatarFallback>{`${
               fullNamesplit[0].charAt(0) + fullNamesplit[1].charAt(0)
             }`}</AvatarFallback>

@@ -111,12 +111,11 @@ export const AddBookModal = ({ open, openChange }: AddBookModalProps) => {
 
     initialUrlChecked.current = true;
   }, [location.search, openChange]);
-
-  // Update form values when book data is loaded
+  // Modify the useEffect for loading book data
   useEffect(() => {
     if (bookData?.value && isEditMode) {
-      // Extract genre IDs directly from the genreIds property
-      const extractedGenreIds = bookData.value.genreIds || [];
+      // Extract genre IDs from the genres array
+      const extractedGenreIds = bookData.value.genres?.map(genre => genre.id) || [];
 
       form.reset({
         title: bookData.value.title || "",
@@ -133,6 +132,16 @@ export const AddBookModal = ({ open, openChange }: AddBookModalProps) => {
     }
   }, [bookData, form, isEditMode]);
 
+  // Modify the getGenreNameById function
+  const getGenreNameById = (id: string): string => {
+    // First try to find in the loaded book's genres
+    const bookGenre = bookData?.value?.genres?.find((g) => g.id === id);
+    if (bookGenre) return bookGenre.name;
+
+    // If not found, fall back to genres from query
+    const genre = genresData?.value?.find((g) => g.id === id);
+    return genre?.name || "Unknown Genre";
+  };
   // Reset form when modal closes
   useEffect(() => {
     if (!open) {
@@ -198,10 +207,10 @@ export const AddBookModal = ({ open, openChange }: AddBookModalProps) => {
   };
 
   // Helper to get genre name by ID
-  const getGenreNameById = (id: string): string => {
-    const genre = genresData?.value?.find((g) => g.id === id);
-    return genre?.name || "Unknown Genre";
-  };
+  // const getGenreNameById = (id: string): string => {
+  //   const genre = genresData?.value?.find((g) => g.id === id);
+  //   return genre?.name || "Unknown Genre";
+  // };
 
   // Form submission handler
   const onSubmit: SubmitHandler<BookForm> = async (data) => {
@@ -396,10 +405,10 @@ export const AddBookModal = ({ open, openChange }: AddBookModalProps) => {
                                   ))}
                                 {(!genresData?.value ||
                                   genresData.value.length === 0) && (
-                                  <SelectItem value="" disabled>
-                                    No genres available
-                                  </SelectItem>
-                                )}
+                                    <SelectItem value="" disabled>
+                                      No genres available
+                                    </SelectItem>
+                                  )}
                               </SelectContent>
                             </Select>
                             <Button
